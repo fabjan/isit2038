@@ -24,7 +24,7 @@ fun tellTime () =
     val time2038 = Time.fromSeconds 2147483647
     val isIt2038 = time2038 < timeNow
   in
-    response 200 "text/plain" (if isIt2038 then "Yes\n" else "No\n")
+    response 200 "text/html" (renderPage (if isIt2038 then "ja" else "nej"))
   end
 
 fun router req =
