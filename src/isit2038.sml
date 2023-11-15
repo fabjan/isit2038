@@ -23,8 +23,10 @@ fun tellTime () =
     val timeNow = Time.now ()
     val time2038 = Time.fromSeconds 2147483647
     val isIt2038 = time2038 < timeNow
+    val progress = (Time.toReal timeNow) / (Time.toReal time2038)
+    val progress = LargeReal.floor (progress * 100.0)
   in
-    response 200 "text/html" (renderPage (if isIt2038 then "ja" else "nej"))
+    response 200 "text/html" (renderPage (if isIt2038 then "ja" else "nej") (Int.toString progress))
   end
 
 fun router req =
