@@ -18,15 +18,23 @@
  * Has 03:14:07 UTC on 19 January 2038 passed yet?
  *)
 
+val newYearsDay2038 = Date.date {
+  year = 2038, month = Date.Jan, day = 1,
+  hour = 0, minute = 0, second = 0,
+  offset = SOME Time.zeroTime
+}
+
 fun tellTime () =
   let
     val timeNow = Time.now ()
-    val time2038 = Time.fromSeconds 2147483647
-    val isIt2038 = time2038 < timeNow
-    val progress = (Time.toReal timeNow) / (Time.toReal time2038)
+    val lastSecond = Time.fromSeconds 2147483647
+    val isIt2038 = (Date.toTime newYearsDay2038) <= timeNow
+    val isItReally = lastSecond < timeNow
+    val progress = (Time.toReal timeNow) / (Time.toReal lastSecond)
     val progress = LargeReal.floor (progress * 100.0)
+    val message = if isIt2038 then (if isItReally then "ja" else "troligtvis") else "nej"
   in
-    response 200 "text/html" (renderPage (if isIt2038 then "ja" else "nej") (Int.toString progress))
+    response 200 "text/html" (renderPage message (Int.toString progress))
   end
 
 fun router req =
