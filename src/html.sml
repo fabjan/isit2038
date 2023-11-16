@@ -5,13 +5,19 @@ fun renderPage message progress =
   \  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\
   \  <title>&Auml;r det 2038?</title>\
   \  <style>\
+  \    :root {\
+  \      --light-color: #69F7BE;\
+  \      --dark-color: #1c2128;\
+  \    }\
   \    body { font-family: sans-serif; }\
   \    p { font-size: 3em; }\
-  \    body { background-color: #69F7BE; }\
-  \    p { color: #1c2128; }\
+  \    body { background-color: var(--light-color); }\
+  \    p { color: var(--dark-color); }\
+  \   .progress-bar { background-color: var(--dark-color); }\
   \    @media (prefers-color-scheme: dark) {\
-  \      body { background-color: #1c2128; }\
-  \      p { color: #69F7BE; }\
+  \      body { background-color: var(--dark-color); }\
+  \      p { color: var(--light-color); }\
+  \      .progress-bar { background-color: var(--light-color); }\
   \    }\
   \    html, body {\
   \      height: 100%;\
@@ -27,8 +33,8 @@ fun renderPage message progress =
   \</head>\
   \<body>\
   \  <p>" ^ message ^ "</p>\
-  \  <div style=\"width: 100%; height: 1px; background-color: #1c2128;\">\
-  \    <div style=\"width: " ^ progress ^ "%; height: 1px; background-color: #69F7BE;\"></div>\
+  \  <div style=\"width: 100%; height: 1px;\">\
+  \    <div style=\"width: " ^ progress ^ "%; height: 1px;\" class=\"progress-bar\"></div>\
   \  </div>\
   \</body>\
   \</html>"
