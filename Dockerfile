@@ -4,6 +4,7 @@ RUN apk add --no-cache polyml
 RUN apk add --no-cache g++
 RUN apk add --no-cache polyml-dev
 
+COPY lib lib
 COPY src src
 COPY *.mlb polybuild.sml build.sh .
 

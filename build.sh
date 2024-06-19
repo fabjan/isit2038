@@ -21,7 +21,7 @@ log_error () {
 }
 
 if [ -z "$SML_COMPILER" ]; then
-    log "SML_COMPILER not set, using polyc (alternatives: mlton)"
+    log "SML_COMPILER not set, using polyc (alternatives: mlton, mlton-static)"
     SML_COMPILER=polyc
 fi
 
@@ -36,7 +36,7 @@ build () {
                 polyc -o polybuild polybuild.sml
             fi
             POLY_TOPLEVEL=$BUILD_DIR/"$BUILD_FILE".poly.sml
-            ./polybuild "$BUILD_FILE" | grep -v "src/main.sml" > "$POLY_TOPLEVEL"
+            ./polybuild "$BUILD_FILE" | grep -v "/main.sml" > "$POLY_TOPLEVEL"
             log "Compiling $POLY_TOPLEVEL"
             polyc -o $BUILD_DIR/"$PROG" "$POLY_TOPLEVEL"
             ;;
@@ -44,12 +44,22 @@ build () {
             log "Compiling $BUILD_FILE"
             mlton -output $BUILD_DIR/"$PROG" "$BUILD_FILE"
             ;;
+        mlton-static)
+            log "Compiling $BUILD_FILE"
+            mlton -output $BUILD_DIR/"$PROG" -link-opt -static "$BUILD_FILE"
+            ;;
         *)
             log_error "Unknown compiler $SML_COMPILER"
             exit 1
             ;;
     esac
 }
+
+if [ ! -d "lib" ] && [ -f "sml.pkg" ]
+then
+    log "Syncing dependencies"
+    smlpkg sync
+fi
 
 mkdir -p $BUILD_DIR
 for build_file in *.mlb; do
