@@ -1,6 +1,6 @@
 local
   $(SML_LIB)/basis/basis.mlb
-  src/http.sml
+  lib/github.com/fabjan/smelly/smelly.mlb
   src/html.sml
 in
   src/isit2038.sml

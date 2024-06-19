@@ -24,12 +24,22 @@ val newYearsDay2038 = Date.date {
   offset = SOME Time.zeroTime
 }
 
+fun response status contentType body =
+  let
+    val headers = [
+      ("Content-Type", contentType),
+      ("Content-Length", Int.toString (String.size body))
+    ]
+  in
+    Smelly.Http.Response.mk status headers body
+  end
+
 fun tellTime () =
   let
     val timeNow = Time.now ()
     val lastSecond = Time.fromSeconds 2147483647
-    val isIt2038 = (Date.toTime newYearsDay2038) <= timeNow
-    val isItReally = lastSecond < timeNow
+    val isIt2038 = Time.<= (Date.toTime newYearsDay2038, timeNow)
+    val isItReally = Time.< (lastSecond, timeNow)
     val progress = (Time.toReal timeNow) / (Time.toReal lastSecond)
     val progress = LargeReal.floor (progress * 100.0)
     val message = if isIt2038 then (if isItReally then "ja" else "troligtvis") else "nej"
@@ -39,7 +49,7 @@ fun tellTime () =
 
 fun router req =
   case (#method req, #path req) of
-      ("GET", "/") => tellTime ()
+      (Smelly.Http.Method.Get, "/") => tellTime ()
     | _ => response 404 "text/plain" "Not found\n"
 
 fun main () =
@@ -53,6 +63,6 @@ fun main () =
     Socket.Ctl.setREUSEADDR (sock, true);
     Socket.bind (sock, INetSock.any port);
     Socket.listen (sock, 5);
-    print ("Listening on port " ^ (Int.toString port) ^ "\n");
-    serveHTTP sock router
+    print ("Serving on http://localhost:" ^ (Int.toString port) ^ "\n");
+    Smelly.serve sock router
   end

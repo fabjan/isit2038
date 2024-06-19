@@ -1,6 +1,7 @@
+# build crap
 _build/
 a.out
-
 polybuild
 
-fly.toml
+# deps crap
+lib/
